@@ -119,3 +119,9 @@ package-lock.json
 # extension
 .eslintrc.json
 .prettierrc
+
+# pm2
+ecosystem.config.js
+
+# build
+build/
