@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 
-const PORT = 4000;
+const PORT = process.env.DEV_PORT;
 
 const app = express();
 const logger = morgan('dev');
