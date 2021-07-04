@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', rootRouter);
 
-app.listen(config.port, () =>
-  console.log(`✅ Server listening on api.k-peach.io:${config.port}/`)
+app.listen(80, () =>
+  // eslint-disable-next-line no-console
+  console.log(`✅ Server listening on api.k-peach.io`)
 );
