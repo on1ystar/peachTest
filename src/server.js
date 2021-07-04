@@ -1,7 +1,6 @@
 import helmet from 'helmet';
 import express from 'express';
 import morgan from 'morgan';
-import config from './config';
 import rootRouter from './routers/rootRouter';
 
 const app = express();
