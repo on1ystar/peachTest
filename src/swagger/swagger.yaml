@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: Peach API TEST
+  description: k-peach의 RESTfull API 테스트를 위한 문서.
+  version: 1.0.0
+  license:
+    name: MIT
+  contact:
+    name: Peach
+    email: tjdwls0607@naver.com
+    url: www.k-peach.io
+servers:
+  - url: https://api.k-peach.io/
+  - description: Peach API server for dev
+host: api.k-peach.io:80
+basePath: '/'
+tags:
+  - name: TEST
+  - description: API for test
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /img/{imgId}:
+    get:
+      tags:
+        - image
+      summary: Returns a path of image in S3.
+      parameters:
+        - name: imgId
+          in: path
+          required: true
+          description: The ID of the iamge to return
+          schema:
+            type: string
+      responses:
+        200:
+          description: A image path.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: number
+                    example: 1.jpeg
+                  path:
+                    type: string
+                    example: http://test.k-peach.io/sw-maestro-logo.png
+        400:
+          description: The specified image ID is invalid (not a number).
+        404:
+          description: A ing with the specified ID was not found.
+        default:
+          description: Unexpected error
+  /img/:
+    post:
+      tags:
+        - image
+      summary: Add new imamge in s3.
+      parameters:
+        - name: img
+          in: body
+          description: Image file to add.
+          schema:
+            type: string
+      responses:
+        200:
+          description: A img path.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: number
+                    example: 1.jpeg
+                  path:
+                    type: string
+                    example: http://test.k-peach.io/sw-maestro-logo.png
+        400:
+          description: The image file is wrong format or duplicate name.
+        default:
+          description: Unexpected error
