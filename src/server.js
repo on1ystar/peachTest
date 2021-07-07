@@ -4,7 +4,10 @@ import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
+import cors from 'cors';
 import rootRouter from './routers/rootRouter';
+import s3TempRouter from './routers/s3TempRouter';
+import s3PerfectVoiceRouter from './routers/s3PerfectVoiceRouter';
 
 const app = express();
 const logger = morgan('dev');
@@ -14,9 +17,12 @@ app.use(helmet());
 app.set('views', process.cwd() + '/src/views');
 app.use(logger);
 app.use(express.urlencoded({ extended: true }));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(cors());
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/', rootRouter);
+app.use('/s3/temp', s3TempRouter);
+app.use('/s3/perfect-voice', s3PerfectVoiceRouter);
 
 app.listen(80, () =>
   // eslint-disable-next-line no-console
