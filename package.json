@@ -2,14 +2,15 @@
   "name": "peach-test",
   "version": "1.0.0",
   "desciption": "test app for peach project",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "dev:server": "nodemon --exec babel-node src/server.js --delay 2",
+    "dev:server": "nodemon --exec babel-node src/server.js",
     "dev:s3": "nodemon --exec babel-node public/s3_test.js",
-    "build:server": "babel src -d build",
+    "build:server": "babel --plugins transform-remove-console src -d build",
     "pm2:dev": "pm2 start ecosystem.config.js --watch",
     "pm2:prod": "pm2 start ecosystem.config.js --env production",
-    "pm2:reload": "pm2 reload peach-dev"
+    "pm2:reload": "pm2 reload peach-dev",
+    "api:docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml"
   },
   "repository": {
     "type": "git",
@@ -23,11 +24,14 @@
   "homepage": "https://github.com/on1ystar/peachTest#readme",
   "dependencies": {
     "aws-sdk": "^2.938.0",
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "morgan": "^1.10.0",
-    "uuid": "^8.3.2"
+    "shelljs": "^0.8.4",
+    "uuid": "^8.3.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
@@ -41,6 +45,9 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-import": "^2.23.4",
-    "nodemon": "^2.0.9"
+    "nodemon": "^2.0.9",
+    "swagger-cli": "^4.0.4",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6"
   }
 }
