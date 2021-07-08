@@ -28,8 +28,11 @@ s3TempRouter.get('/', (req, res) => {
     const mappedData = data.Contents.map(el => {
       if (el.Size === 0) {
         return {
-          bucket: `${params.Bucket}/${params.Prefix}`,
-          count: data.KeyCount
+          name: '',
+          format: '',
+          path: `${conf.bucket.data}/${el.Key}`,
+          size: el.Size,
+          lastModified: el.LastModified
         };
       }
       return {
@@ -40,7 +43,7 @@ s3TempRouter.get('/', (req, res) => {
         lastModified: el.LastModified
       };
     });
-    return res.json({ success: 'true', mappedData });
+    return res.json({ success: 'true', data: mappedData });
   });
 });
 

@@ -24,18 +24,11 @@ consumes:
 produces:
   - application/json
 paths:
-  /img/{imgId}:
+  /s3/temp/:
     get:
       tags:
-        - image
-      summary: Returns a path of image in S3.
-      parameters:
-        - name: imgId
-          in: path
-          required: true
-          description: The ID of the iamge to return
-          schema:
-            type: string
+        - images
+      summary: Returns a path of images in S3.
       responses:
         200:
           description: A image path.
@@ -44,25 +37,63 @@ paths:
               schema:
                 type: object
                 properties:
+                  success:
+                    type: boolean
+                    expample: true
                   name:
-                    type: number
-                    example: 1.jpeg
+                    type: string
+                    example: 1
+                  format:
+                    type: string
+                    example: jpg
                   path:
                     type: string
-                    example: http://test.k-peach.io/sw-maestro-logo.png
+                    example: data.k-peach.io/temp/1.jpg
+                  size:
+                    type: number
+                    example: 2846729
+                  lastModified:
+                    type: string
+                    example: '2021-07-05T09:55:52.000Z'
         400:
-          description: The specified image ID is invalid (not a number).
+          description: The specified image name is invalid (not a number).
         404:
-          description: A ing with the specified ID was not found.
+          description: A image with the specified name was not found.
         default:
           description: Unexpected error
-  /img/:
+  /s3/temp/{name}:
+    get:
+      tags:
+        - image
+      summary: Returns a path of image in S3.
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: The name of the iamge to return
+          schema:
+            type: string
+            example: 1.jpg
+      responses:
+        200:
+          description: A image path.
+          content:
+            application/json:
+              schema:
+                type: image/jpeg
+        400:
+          description: The specified image name is invalid (not a number).
+        404:
+          description: A image with the specified name was not found.
+        default:
+          description: Unexpected error
+  /s3/temp:
     post:
       tags:
         - image
       summary: Add new imamge in s3.
       parameters:
-        - name: img
+        - name: image
           in: body
           description: Image file to add.
           schema:
