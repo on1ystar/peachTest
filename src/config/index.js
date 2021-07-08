@@ -10,7 +10,8 @@ const conf = {
     region: process.env.PEACH_DEV_REGION
   },
   bucket: {
-    test: process.env.BUCKET_TEST
+    test: process.env.BUCKET_TEST,
+    data: process.env.BUCKET_DATA
   }
 };
 

@@ -10,7 +10,7 @@
     "pm2:dev": "pm2 start ecosystem.config.js --watch",
     "pm2:prod": "pm2 start ecosystem.config.js --env production",
     "pm2:reload": "pm2 reload peach-dev",
-    "api:docs": "swagger-cli bundle ./src/swagger/openapi.yaml --outfile build/swagger.yaml --type yaml"
+    "api:docs": "swagger-cli bundle ./src/swagger/swagger.yaml --outfile build/swagger/swagger.yaml --type yaml"
   },
   "repository": {
     "type": "git",
