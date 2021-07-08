@@ -60,10 +60,17 @@ s3TempRouter.get('/:name', (req, res) => {
         .status(err.statusCode)
         .json({ success: 'false', errorMessage: err.message });
     }
-    res.writeHead(200, { 'Content-Type': data.ContentType });
-    res.write(data.Body);
-    res.end();
-    // return res.json({ success: 'true', data });
+    // res.writeHead(200, { 'Content-Type': data.ContentType });
+    // res.write(data.Body);
+    // res.end();
+    const obj = {
+      name,
+      format: 'jpg',
+      path: `${conf.bucket.data}/${params.Key}`,
+      size: data.ContentLength,
+      lastModified: data.LastModified
+    };
+    return res.json({ success: 'true', data: obj });
   });
 });
 

@@ -39,7 +39,7 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    expample: true
+                    example: true
                   name:
                     type: string
                     example: 1
@@ -80,7 +80,26 @@ paths:
           content:
             application/json:
               schema:
-                type: image/jpeg
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  name:
+                    type: string
+                    example: 1
+                  format:
+                    type: string
+                    example: jpg
+                  path:
+                    type: string
+                    example: data.k-peach.io/temp/1.jpg
+                  size:
+                    type: number
+                    example: 2846729
+                  lastModified:
+                    type: string
+                    example: '2021-07-05T09:55:52.000Z'
         400:
           description: The specified image name is invalid (not a number).
         404:
