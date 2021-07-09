@@ -6,8 +6,8 @@ import YAML from 'yamljs';
 import path from 'path';
 import cors from 'cors';
 import rootRouter from './routers/rootRouter';
-import s3TempRouter from './routers/s3TempRouter';
-import s3PerfectVoiceRouter from './routers/s3PerfectVoiceRouter';
+import s3ThumbnailRouter from './routers/s3/s3ThumbnailRouter';
+import s3PerfectVoiceRouter from './routers/s3/s3PerfectVoiceRouter';
 
 const app = express();
 const logger = morgan('dev');
@@ -21,7 +21,7 @@ app.use(cors());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/', rootRouter);
-app.use('/s3/temp', s3TempRouter);
+app.use('/s3/thumbnail', s3ThumbnailRouter);
 app.use('/s3/perfect-voice', s3PerfectVoiceRouter);
 
 app.listen(80, () =>

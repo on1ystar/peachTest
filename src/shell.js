@@ -1,12 +1,16 @@
-const shell = require('shelljs');
+const { v4: uuidv3 } = require('uuid');
 
-const regex = /\.jpg/g;
-const test = shell.exec('aws s3 ls s3://data.k-peach.io/temp/');
+// const shell = require('shelljs');
 
-console.log(
-  test.stdout.split('\n').forEach(e => {
-    console.log(e);
-    const t = e.match(regex);
-    console.log(t);
-  })
-);
+// const regex = /\.jpg/g;
+// const test = shell.exec('aws s3 ls s3://data.k-peach.io/temp/');
+
+// console.log(
+//   test.stdout.split('\n').forEach(e => {
+//     console.log(e);
+//     const t = e.match(regex);
+//     console.log(t);
+//   })
+// );
+
+console.log(uuidv3('사과'));
