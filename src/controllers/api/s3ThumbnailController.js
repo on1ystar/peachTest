@@ -34,7 +34,7 @@ export const getThumbnails = async (req, res) => {
   } catch (err) {
     console.log('Error: ', err);
     return res
-      .status(err.statusCode)
+      .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });
   }
 };
@@ -43,13 +43,13 @@ export const getThumbnail = async (req, res) => {
   const { name } = req.params;
   const bucketParams = {
     Bucket: conf.bucket.data,
-    Key: `${PREFIX}/${name}`
+    Key: `${PREFIX}/${name}.${FORMAT}`
   };
 
   try {
     const data = await s3Client.send(new GetObjectCommand(bucketParams));
     const obj = {
-      name: bucketParams.Key.match(regex)[0].split('.')[0],
+      name,
       format: FORMAT,
       path: `${conf.bucket.data}/${bucketParams.Key}`,
       size: data.ContentLength,
@@ -59,7 +59,7 @@ export const getThumbnail = async (req, res) => {
   } catch (err) {
     console.log('Error: ', err);
     return res
-      .status(err.statusCode)
+      .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });
   }
 };

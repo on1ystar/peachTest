@@ -1,45 +1,47 @@
-openapi: 3.0.0
+swagger: '2.0'
 info:
   title: Peach API TEST
-  description: k-peach의 RESTfull API 테스트를 위한 문서.
+  description: '`k-peach`의 RESTfull API dev 문서.'
   version: 1.0.0
   license:
     name: MIT
   contact:
     name: Peach
     email: tjdwls0607@naver.com
-    url: www.k-peach.io
-servers:
-  - url: https://api.k-peach.io/
-  - description: Peach API server for dev
-host: api.k-peach.io:80
+    url: www.k-peach.io/
+host: api.k-peach.io
 basePath: '/'
 tags:
-  - name: TEST
-  - description: API for test
+  - name: 'thumbnail'
+    description: 'Thumbnail image(.jpg) about packaged video'
+  - name: 'perfect-voice'
+    description: 'Voice recorded by voice actor'
+  - name: 'user-voice'
+    description: 'Voice recorded by user'
 schemes:
   - https
-consumes:
-  - application/json
-produces:
-  - application/json
 paths:
-  /s3/temp/:
+  /thumbnail/:
     get:
       tags:
-        - images
-      summary: Returns a path of images in S3.
+        - thumbnail
+      summary: Get thumbnail images in S3.
+      consumes:
+        - application/json
+      produces:
+        - application/json
       responses:
         200:
-          description: A image path.
-          content:
-            application/json:
-              schema:
+          description: The images list.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
                   name:
                     type: string
                     example: 1
@@ -48,43 +50,40 @@ paths:
                     example: jpg
                   path:
                     type: string
-                    example: data.k-peach.io/temp/1.jpg
+                    example: data.k-peach.io/thumbnail/1.jpg
                   size:
                     type: number
                     example: 2846729
                   lastModified:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
-        400:
-          description: The specified image name is invalid (not a number).
-        404:
-          description: A image with the specified name was not found.
-        default:
-          description: Unexpected error
-  /s3/temp/{name}:
+  /thumbnail/{name}:
     get:
       tags:
-        - image
-      summary: Returns a path of image in S3.
+        - thumbnail
+      summary: Get a thumbnail image in S3.
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
         - name: name
           in: path
           required: true
-          description: The name of the iamge to return
-          schema:
-            type: string
-            example: 1.jpg
+          description: The name of a iamge to get
+          type: string
       responses:
         200:
-          description: A image path.
-          content:
-            application/json:
-              schema:
+          description: A image.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
                   name:
                     type: string
                     example: 1
@@ -93,7 +92,7 @@ paths:
                     example: jpg
                   path:
                     type: string
-                    example: data.k-peach.io/temp/1.jpg
+                    example: data.k-peach.io/thumbnail/1.jpg
                   size:
                     type: number
                     example: 2846729
@@ -101,37 +100,280 @@ paths:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
         400:
-          description: The specified image name is invalid (not a number).
-        404:
-          description: A image with the specified name was not found.
+          description: The specified image name is invalid or non-existent.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
         default:
           description: Unexpected error
-  /s3/temp:
-    post:
-      tags:
-        - image
-      summary: Add new imamge in s3.
-      parameters:
-        - name: image
-          in: body
-          description: Image file to add.
           schema:
-            type: string
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
+  /perfect-voice/:
+    get:
+      tags:
+        - perfect-voice
+      summary: Get perfect-voice audio in S3.
+      consumes:
+        - application/json
+      produces:
+        - application/json
       responses:
         200:
-          description: A img path.
-          content:
-            application/json:
-              schema:
+          description: The audio files list.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
                 type: object
                 properties:
                   name:
-                    type: number
-                    example: 1.jpeg
+                    type: string
+                    example: Hello
+                  format:
+                    type: string
+                    example: wav
                   path:
                     type: string
-                    example: http://test.k-peach.io/sw-maestro-logo.png
+                    example: data.k-peach.io/perfect-voice/Hello.wav
+                  size:
+                    type: number
+                    example: 2846729
+                  lastModified:
+                    type: string
+                    example: '2021-07-05T09:55:52.000Z'
+  /perfect-voice/{name}:
+    get:
+      tags:
+        - perfect-voice
+      summary: Get a poerfect-voice audio in S3.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: The name of a audio file to get
+          type: string
+      responses:
+        200:
+          description: A audio file.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Hello
+                  format:
+                    type: string
+                    example: wav
+                  path:
+                    type: string
+                    example: data.k-peach.io/perfect-voice/Hello.wav
+                  size:
+                    type: number
+                    example: 2846729
+                  lastModified:
+                    type: string
+                    example: '2021-07-05T09:55:52.000Z'
         400:
-          description: The image file is wrong format or duplicate name.
+          description: The specified audio file name is invalid or non-existent.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
         default:
           description: Unexpected error
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
+  /user-voice/:
+    get:
+      tags:
+        - user-voice
+      summary: Get user-voice audio in S3.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: The audio files list.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: '2021-07-10'
+                  format:
+                    type: string
+                    example: wav
+                  path:
+                    type: string
+                    example: data.k-peach.io/user-voice/2021-07-10.wav
+                  size:
+                    type: number
+                    example: 2846729
+                  lastModified:
+                    type: string
+                    example: '2021-07-05T09:55:52.000Z'
+    post:
+      tags:
+        - user-voice
+      summary: Get a user-voice audio in S3.
+      description: You should set up the attribute of form tag like `name="uploadFile"` and file format is `.wav`
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: 'uploadedFile'
+          in: 'formData'
+          description: file to upload `.wav`
+          required: true
+          type: 'file'
+      responses:
+        200:
+          description: A audio file.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: '2021-07-10'
+                  format:
+                    type: string
+                    example: wav
+                  path:
+                    type: string
+                    example: data.k-peach.io/user-voice/2021-07-10.wav
+                  size:
+                    type: number
+                    example: 2846729
+                  mimetype:
+                    type: string
+                    example: 'audio/wav'
+        400:
+          description: The specified audio file name is invalid or non-existent.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
+        default:
+          description: Unexpected error
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
+  /user-voice/{name}:
+    get:
+      tags:
+        - user-voice
+      summary: Get a user-voice audio in S3.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: The name of a audio file to get
+          type: string
+      responses:
+        200:
+          description: A audio file.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: '2021-07-10'
+                  format:
+                    type: string
+                    example: wav
+                  path:
+                    type: string
+                    example: data.k-peach.io/user-voice/2021-07-10.wav
+                  size:
+                    type: number
+                    example: 2846729
+                  lastModified:
+                    type: string
+                    example: '2021-07-05T09:55:52.000Z'
+        400:
+          description: The specified audio file name is invalid or non-existent.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string
+        default:
+          description: Unexpected error
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              errorMessage:
+                type: string

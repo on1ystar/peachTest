@@ -6,9 +6,9 @@ import YAML from 'yamljs';
 import path from 'path';
 import cors from 'cors';
 import rootRouter from './routers/rootRouter';
-import s3ThumbnailRouter from './routers/s3/s3ThumbnailRouter';
-import s3PerfectVoiceRouter from './routers/s3/s3PerfectVoiceRouter';
-import s3UserVoiceRouter from './routers/s3/s3UserVoiceRouter';
+import thumbnailRouter from './routers/s3/thumbnailRouter';
+import perfectVoiceRouter from './routers/s3/perfectVoiceRouter';
+import userVoiceRouter from './routers/s3/userVoiceRouter';
 
 const app = express();
 const logger = morgan('dev');
@@ -22,9 +22,9 @@ app.use(cors());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/', rootRouter);
-app.use('/s3/thumbnail', s3ThumbnailRouter);
-app.use('/s3/perfect-voice', s3PerfectVoiceRouter);
-app.use('/s3/user-voice', s3UserVoiceRouter);
+app.use('/thumbnail', thumbnailRouter);
+app.use('/perfect-voice', perfectVoiceRouter);
+app.use('/user-voice', userVoiceRouter);
 
 app.listen(80, () =>
   // eslint-disable-next-line no-console
