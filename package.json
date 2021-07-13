@@ -5,11 +5,11 @@
   "main": "server.js",
   "scripts": {
     "dev:server": "nodemon --exec babel-node src/server.js",
-    "dev:s3": "nodemon --exec babel-node public/s3_test.js",
+    "db:connect": "babel-node src/db.js",
     "build:server": "babel --plugins transform-remove-console src -d build",
     "pm2:dev": "pm2 start ecosystem.config.js --watch",
     "pm2:prod": "pm2 start ecosystem.config.js --env production",
-    "pm2:reload": "pm2 reload peach-dev --update-env",
+    "pm2:reload": "pm2 reload peach-api --update-env",
     "api:docs": "swagger-cli bundle ./src/swagger/swagger.yaml --outfile build/swagger/swagger.yaml --type yaml"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "helmet": "^4.6.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
+    "pg": "^8.6.0",
     "shelljs": "^0.8.4",
     "uuid": "^8.3.2",
     "yamljs": "^0.3.0"
