@@ -18,6 +18,13 @@ const conf = {
     pw: process.env.DB_PW,
     name: process.env.DB_NAME,
     port: process.env.DB_PORT
+  },
+  jwt: {
+    secretKey: Buffer.from(process.env.JWT_SECRET_KEY),
+    options: {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+      issuer: process.env.JWT_ISSUER
+    }
   }
 };
 

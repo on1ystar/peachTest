@@ -1,15 +1,17 @@
 import { GetObjectCommand, ListObjectsCommand } from '@aws-sdk/client-s3';
-import { s3Client } from '../../config/s3';
-import conf from '../../config';
+import { s3Client } from '../../../config/s3';
+import conf from '../../../config';
 
-const PREFIX = 'thumbnail';
-const FORMAT = 'jpg';
+const PREFIX = 'perfect-voice';
+const FORMAT = 'wav';
 const regex = /([^/]+)(\.[^./]+)$/g;
 
-export const getThumbnails = async (req, res) => {
+// P -> Perfect
+export const getPVoices = async (req, res) => {
   const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
 
   try {
+    // data 변수 이름 수정(data는 광범위)
     const data = await s3Client.send(new ListObjectsCommand(bucketParams));
     const mappedData = data.Contents.map(el => {
       // bucket folder
@@ -32,6 +34,7 @@ export const getThumbnails = async (req, res) => {
     });
     return res.json({ success: 'true', data: mappedData });
   } catch (err) {
+    // error 별로 구분 -> 어떤 에러인지
     console.log('Error: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
@@ -39,7 +42,7 @@ export const getThumbnails = async (req, res) => {
   }
 };
 
-export const getThumbnail = async (req, res) => {
+export const getPVoice = async (req, res) => {
   const { name } = req.params;
   const bucketParams = {
     Bucket: conf.bucket.data,

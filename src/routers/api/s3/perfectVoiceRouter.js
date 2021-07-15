@@ -1,19 +1,18 @@
 import express from 'express';
-import conf from '../../config';
-import { s3, s3Client } from '../../config/s3';
 import {
   getPVoice,
   getPVoices
-} from '../../controllers/api/s3PerfectVoiceController';
+} from '../../../controllers/api/s3/perfectVoiceController';
+import { middleAuth } from '../../../middlewares';
 
 const perfectVoiceRouter = express.Router();
 
 // get the perfect voices list
 // api.k-peach.io/perfect-voice
-perfectVoiceRouter.get('/', getPVoices);
+perfectVoiceRouter.get('/', middleAuth, getPVoices);
 
 // get a perfect voice
 // api.k-peach.io/perfect-voice/{name}
-perfectVoiceRouter.get('/:name', getPVoice);
+perfectVoiceRouter.get('/:name', middleAuth, getPVoice);
 
 export default perfectVoiceRouter;

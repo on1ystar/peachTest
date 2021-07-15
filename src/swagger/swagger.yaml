@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  title: Peach API TEST
+  title: Peach API Document
   description: '`k-peach`의 RESTfull API dev 문서.'
   version: 1.0.0
   license:
@@ -12,6 +12,8 @@ info:
 host: api.k-peach.io
 basePath: '/'
 tags:
+  - name: 'auth'
+    description: 'Auth for logging user into the system'
   - name: 'thumbnail'
     description: 'Thumbnail image(.jpg) about packaged video'
   - name: 'perfect-voice'
@@ -20,7 +22,47 @@ tags:
     description: 'Voice recorded by user'
 schemes:
   - https
+securityDefinitions:
+  Bearer:
+    description: 'input value like `bearer <token>`'
+    type: apiKey
+    name: Authorization
+    in: header
+security:
+  - Bearer: []
+
 paths:
+  /auth/admin/login:
+    post:
+      tags:
+        - auth
+      summary: Log in as administrator to get jwt token
+      consumes:
+        - application/x-www-form-urlencoded
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: 'email'
+          in: 'formData'
+          description: 'The admin email for login'
+          required: true
+          type: 'string'
+      responses:
+        200:
+          description: The images list.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              token:
+                type: string
+
+        400:
+          description: Failed to verify the email entered to log in
+
   /thumbnail/:
     get:
       tags:
@@ -57,6 +99,7 @@ paths:
                   lastModified:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
+
   /thumbnail/{name}:
     get:
       tags:
@@ -109,6 +152,7 @@ paths:
                 example: false
               errorMessage:
                 type: string
+
         default:
           description: Unexpected error
           schema:
@@ -155,6 +199,7 @@ paths:
                   lastModified:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
+
   /perfect-voice/{name}:
     get:
       tags:
@@ -207,6 +252,7 @@ paths:
                 example: false
               errorMessage:
                 type: string
+
         default:
           description: Unexpected error
           schema:
@@ -253,6 +299,7 @@ paths:
                   lastModified:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
+
     post:
       tags:
         - user-voice
@@ -305,6 +352,7 @@ paths:
                 example: false
               errorMessage:
                 type: string
+
         default:
           description: Unexpected error
           schema:

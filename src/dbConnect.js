@@ -9,11 +9,14 @@ const dbconfig = {
   port: conf.db.port,
   ssl: { rejectUnauthorized: false }
 };
-const client = new pg.Client(dbconfig);
-client.connect(err => {
+const dbClient = new pg.Client(dbconfig);
+
+dbClient.connect(err => {
   if (err) {
     console.log('Failed to connect db ' + err);
   } else {
     console.log('Connect to db done!');
   }
 });
+
+export default dbClient;

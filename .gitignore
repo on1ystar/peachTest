@@ -126,3 +126,6 @@ ecosystem.config.js
 
 # build
 build/
+
+# test
+src/test.js

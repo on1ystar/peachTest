@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev:server": "nodemon --exec babel-node src/server.js",
-    "db:connect": "babel-node src/db.js",
+    "db:connect": "babel-node src/dbConnect.js",
     "build:server": "babel --plugins transform-remove-console src -d build",
     "pm2:dev": "pm2 start ecosystem.config.js --watch",
     "pm2:prod": "pm2 start ecosystem.config.js --env production",
@@ -29,9 +29,11 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "pg": "^8.6.0",
+    "sequelize": "^6.6.5",
     "shelljs": "^0.8.4",
     "uuid": "^8.3.2",
     "yamljs": "^0.3.0"

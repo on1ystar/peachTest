@@ -4,10 +4,10 @@ import {
   PutObjectCommand
 } from '@aws-sdk/client-s3';
 import multer from 'multer';
-import { s3Client } from '../../config/s3';
-import getNow from '../../date';
-import conf from '../../config';
-import { middleMulter } from '../../middlewares';
+import { s3Client } from '../../../config/s3';
+import getNow from '../../../date';
+import conf from '../../../config';
+import { middleMulter } from '../../../middlewares';
 
 const PREFIX = 'user-voice';
 const FORMAT = 'wav';

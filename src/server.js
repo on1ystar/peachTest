@@ -6,9 +6,10 @@ import YAML from 'yamljs';
 import path from 'path';
 import cors from 'cors';
 import rootRouter from './routers/rootRouter';
-import thumbnailRouter from './routers/s3/thumbnailRouter';
-import perfectVoiceRouter from './routers/s3/perfectVoiceRouter';
-import userVoiceRouter from './routers/s3/userVoiceRouter';
+import thumbnailRouter from './routers/api/s3/thumbnailRouter';
+import perfectVoiceRouter from './routers/api/s3/perfectVoiceRouter';
+import userVoiceRouter from './routers/api/s3/userVoiceRouter';
+import adminRouter from './routers/api/auth/adminRouter';
 
 const app = express();
 const logger = morgan('dev');
@@ -25,6 +26,7 @@ app.use('/', rootRouter);
 app.use('/thumbnail', thumbnailRouter);
 app.use('/perfect-voice', perfectVoiceRouter);
 app.use('/user-voice', userVoiceRouter);
+app.use('/auth/admin', adminRouter);
 
 app.listen(80, () =>
   // eslint-disable-next-line no-console
