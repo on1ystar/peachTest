@@ -2,7 +2,7 @@
 - PrgName : server.js at peach-api  
 - Date : 2021. 07. 18 
 - Creator : 정성진 ( tjdwls0607@naver.com )
-- Version : v0.1.0 
+- Version : v1.0.0 
 - Description : peach API back-end server 
 - Usage 
 1) startup : sudo npm run dev:server
@@ -35,12 +35,12 @@ app.use(logger);
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use('/', rootRouter);
-app.use('/api/s3/thumbnail', thumbnailRouter);
-app.use('/api/s3/perfect-voice', perfectVoiceRouter);
-app.use('/api/s3/user-voice', userVoiceRouter);
-app.use('/api/auth/admin', adminRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // 스웨거 문서 시작점 설정
+app.use('/', rootRouter); // 루트 라우트
+app.use('/api/s3/thumbnail', thumbnailRouter); // 썸네일 api 라우트
+app.use('/api/s3/perfect-voice', perfectVoiceRouter); // 성우 음성 api 라우트
+app.use('/api/s3/user-voice', userVoiceRouter); // 유저 음성 api 라우트
+app.use('/api/auth/admin', adminRouter); // 관리자 인증 api 라우트
 
 app.listen(80, () =>
   // eslint-disable-next-line no-console

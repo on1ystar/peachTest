@@ -10,11 +10,10 @@ export const getPerfectVoices = async (req, res) => {
   const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
 
   try {
-    // data 변수 이름 수정(data는 광범위)
-    const perfectVoices = await s3Client.send(
+    const perfectVoicesList = await s3Client.send(
       new ListObjectsCommand(bucketParams)
     );
-    const mappedData = perfectVoices.Contents.map(el => {
+    const mappedPerfectVoices = perfectVoicesList.Contents.map(el => {
       // bucket folder
       if (el.Size === 0) {
         return {
@@ -33,10 +32,9 @@ export const getPerfectVoices = async (req, res) => {
         lastModified: el.LastModified
       };
     });
-    return res.json({ success: 'true', data: mappedData });
+    return res.json({ success: 'true', data: mappedPerfectVoices });
   } catch (err) {
-    // error 별로 구분 -> 어떤 에러인지
-    console.log('Error: ', err);
+    console.log('ListObjectsCommandError: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });
@@ -54,16 +52,16 @@ export const getPerfectVoice = async (req, res) => {
     const perfectVoice = await s3Client.send(
       new GetObjectCommand(bucketParams)
     );
-    const obj = {
+    const formattedPerfectVoice = {
       name,
       format: FORMAT,
       path: `${conf.bucket.data}/${bucketParams.Key}`,
       size: perfectVoice.ContentLength,
       lastModified: perfectVoice.LastModified
     };
-    return res.json({ success: 'true', data: obj });
+    return res.json({ success: 'true', data: formattedPerfectVoice });
   } catch (err) {
-    console.log('Error: ', err);
+    console.log('GetObjectCommandError: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });

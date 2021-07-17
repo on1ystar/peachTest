@@ -1,3 +1,6 @@
+/*
+  postgreSQL DB 접속 및 사용을 위한 connection 객체 생성
+*/
 import pg from 'pg';
 import conf from './config';
 

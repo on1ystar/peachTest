@@ -6,13 +6,16 @@ const PREFIX = 'thumbnail';
 const FORMAT = 'jpg';
 const regex = /([^/]+)(\.[^./]+)$/g;
 
+// rqeust로부터 S3에 저장된 썸네일 이미지 리스트 response
 export const getThumbnails = async (req, res) => {
   const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
 
   try {
-    const data = await s3Client.send(new ListObjectsCommand(bucketParams));
-    const mappedData = data.Contents.map(el => {
-      // bucket folder
+    const thumbnailsList = await s3Client.send(
+      new ListObjectsCommand(bucketParams)
+    );
+    const mappedThumbnails = thumbnailsList.Contents.map(el => {
+      // bucket folder 예외처리
       if (el.Size === 0) {
         return {
           name: '',
@@ -30,15 +33,16 @@ export const getThumbnails = async (req, res) => {
         lastModified: el.LastModified
       };
     });
-    return res.json({ success: 'true', data: mappedData });
+    return res.json({ success: 'true', data: mappedThumbnails });
   } catch (err) {
-    console.log('Error: ', err);
+    console.log('ListObjectsCommandError: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });
   }
 };
 
+// rqeust로부터 S3에 저장된 썸네일 1개 response
 export const getThumbnail = async (req, res) => {
   const { name } = req.params;
   const bucketParams = {
@@ -47,17 +51,17 @@ export const getThumbnail = async (req, res) => {
   };
 
   try {
-    const data = await s3Client.send(new GetObjectCommand(bucketParams));
-    const obj = {
+    const thumbnail = await s3Client.send(new GetObjectCommand(bucketParams));
+    const formattedThumbnail = {
       name,
       format: FORMAT,
       path: `${conf.bucket.data}/${bucketParams.Key}`,
-      size: data.ContentLength,
-      lastModified: data.LastModified
+      size: thumbnail.ContentLength,
+      lastModified: thumbnail.LastModified
     };
-    return res.json({ success: 'true', data: obj });
+    return res.json({ success: 'true', data: formattedThumbnail });
   } catch (err) {
-    console.log('Error: ', err);
+    console.log('GetObjectCommandError: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });

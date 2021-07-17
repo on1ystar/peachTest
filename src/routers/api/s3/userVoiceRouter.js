@@ -2,7 +2,6 @@ import express from 'express';
 import {
   getUserVoice,
   getUserVoices,
-  test,
   uploadUserVoice
 } from '../../../controllers/api/s3/userVoiceController';
 import { middleAuth } from '../../../middlewares';

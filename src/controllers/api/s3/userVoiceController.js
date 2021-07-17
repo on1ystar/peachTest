@@ -11,18 +11,21 @@ import getNow from '../../../date';
 import conf from '../../../config';
 import { middleMulter } from '../../../middlewares';
 
-const PREFIX = 'user-voice';
+const PREFIX = 'user-voice'; // S3 bucket 폴더
 const FORMAT = 'wav';
-const regex = /([^/]+)(\.[^./]+)$/g;
+const regex = /([^/]+)(\.[^./]+)$/g; // 파일 경로에서 파일 이름만 필터링
 const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 
+// request로부터 s3의 user-voice에 대한 리스트를 json으로 response
 export const getUserVoices = async (req, res) => {
   const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
 
   try {
-    const data = await s3Client.send(new ListObjectsCommand(bucketParams));
-    const mappedData = data.Contents.map(el => {
-      // bucket folder
+    const userVoicesList = await s3Client.send(
+      new ListObjectsCommand(bucketParams)
+    );
+    const mappedUserVoices = userVoicesList.Contents.map(el => {
+      // bucket folder 예외처리
       if (el.Size === 0) {
         return {
           name: '',
@@ -40,15 +43,16 @@ export const getUserVoices = async (req, res) => {
         lastModified: el.LastModified
       };
     });
-    return res.json({ success: 'true', data: mappedData });
+    return res.json({ success: 'true', data: mappedUserVoices });
   } catch (err) {
-    console.log('Error: ', err);
+    console.log('ListObjectsCommandError: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });
   }
 };
 
+// request로부터 s3의 user-voice 1개를 json으로 response
 export const getUserVoice = async (req, res) => {
   const { name } = req.params;
   const bucketParams = {
@@ -57,28 +61,29 @@ export const getUserVoice = async (req, res) => {
   };
 
   try {
-    const data = await s3Client.send(new GetObjectCommand(bucketParams));
-    const obj = {
+    const userVoice = await s3Client.send(new GetObjectCommand(bucketParams));
+    const formattedUserVoice = {
       name,
       format: FORMAT,
       path: `${conf.bucket.data}/${bucketParams.Key}`,
-      size: data.ContentLength,
-      lastModified: data.LastModified
+      size: userVoice.ContentLength,
+      lastModified: userVoice.LastModified
     };
-    return res.json({ success: 'true', data: obj });
+    return res.json({ success: 'true', data: formattedUserVoice });
   } catch (err) {
-    console.log('Error: ', err);
+    console.log('GetObjectCommandError: ', err);
     return res
       .status(err.$metadata.httpStatusCode)
       .json({ success: 'false', errorMessage: err.message });
   }
 };
 
+// s3에 user-voice 파일 업로드, 발음 평가 결과를 DB에 저장 후 response
 export const uploadUserVoice = (req, res) => {
   middleMulter.single('uploadedFile')(req, res, async err => {
     // MulterError
     if (err instanceof multer.MulterError) {
-      console.log(err);
+      console.log('MulterError', err);
       return res
         .status(400)
         .json({ success: 'false', errorMessage: err.message });
@@ -103,7 +108,7 @@ export const uploadUserVoice = (req, res) => {
       const userVoices = await s3Client.send(
         new ListObjectsCommand(bucketParams)
       );
-      const date = getNow();
+      const date = getNow(); // 한국을 기준으로 현재 날짜 반환 'yyyy-mm-dd'
 
       const uploadParams = {
         Bucket: conf.bucket.data,
@@ -111,6 +116,7 @@ export const uploadUserVoice = (req, res) => {
         Body: req.file.buffer,
         ACL: 'public-read'
       };
+      // S3에 user-voice 업로드
       await s3Client.send(new PutObjectCommand(uploadParams));
       console.log('Success upload');
 
@@ -124,18 +130,22 @@ export const uploadUserVoice = (req, res) => {
         },
         url
       };
-      // score request to ai server
+      // request to ai server
       try {
-        const aiResponse = await axios(options);
-        console.log('Success response to ai-server', aiResponse.data);
+        const respondedData = (await axios(options)).data;
+        if (!respondedData.success) {
+          console.log('request fail');
+          return res.status(400).json({ success: false, errorMessage: '' });
+        }
+        console.log('Success response to ai-server', respondedData.data);
 
-        const data = {
+        const evaluatedUserVoice = {
           name: uploadParams.Key.match(regex)[0].split('.')[0],
           format: FORMAT,
           path: `${conf.bucket.data}/${uploadParams.Key}`,
           size: req.file.size,
-          translatedSentence: aiResponse.data.data.translatedSentence,
-          score: aiResponse.data.data.score
+          translatedSentence: respondedData.data.translatedSentence,
+          score: respondedData.data.score
         };
 
         // db에 발음 평가 결과 저장
@@ -143,7 +153,11 @@ export const uploadUserVoice = (req, res) => {
           const query = {
             name: 'insertUserVoiceEvaluation',
             text: 'INSERT INTO admin_voice VALUES(default, 1, $1, $2, $3, now())',
-            values: [data.path, data.translatedSentence, data.score]
+            values: [
+              evaluatedUserVoice.path,
+              evaluatedUserVoice.translatedSentence,
+              evaluatedUserVoice.score
+            ]
           };
           await dbClient.query(query);
         } catch (err) {
@@ -152,13 +166,13 @@ export const uploadUserVoice = (req, res) => {
         }
         return res.json({
           success: 'true',
-          data
+          data: evaluatedUserVoice
         });
       } catch (error) {
         console.error('ReqeustToAIServerError: ', error.message);
       }
     } catch (err) {
-      console.log('Error', err);
+      console.log('ListObjectsCommandError', err);
       return res
         .status(err.$metadata.httpStatusCode)
         .json({ success: 'false', errorMessage: err.message });
