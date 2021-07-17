@@ -20,8 +20,6 @@ tags:
     description: 'Voice recorded by voice actor'
   - name: 'user-voice'
     description: 'Voice recorded by user'
-  - name: 'test'
-    description: 'test'
 schemes:
   - https
 securityDefinitions:
@@ -34,7 +32,7 @@ security:
   - Bearer: []
 
 paths:
-  /api/auth/admin/login:
+  /auth/admin/login:
     post:
       tags:
         - auth
@@ -54,18 +52,14 @@ paths:
         200:
           description: The images list.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              token:
-                type: string
+            $ref: '#/definitions/UserVoice'
 
         400:
           description: Failed to verify the email entered to log in
+          schema:
+            $ref: '#/definitions/Error'
 
-  /api/s3/thumbnail/:
+  /thumbnail/:
     get:
       tags:
         - thumbnail
@@ -78,31 +72,14 @@ paths:
         200:
           description: The images list.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: 1
-                  format:
-                    type: string
-                    example: jpg
-                  path:
-                    type: string
-                    example: data.k-peach.io/thumbnail/1.jpg
-                  size:
-                    type: number
-                    example: 2846729
-                  lastModified:
-                    type: string
-                    example: '2021-07-05T09:55:52.000Z'
+            $ref: '#/definitions/Thumbnail'
 
-  /api/s3/thumbnail/{name}:
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /thumbnail/{name}:
     get:
       tags:
         - thumbnail
@@ -121,51 +98,17 @@ paths:
         200:
           description: A image.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: 1
-                  format:
-                    type: string
-                    example: jpg
-                  path:
-                    type: string
-                    example: data.k-peach.io/thumbnail/1.jpg
-                  size:
-                    type: number
-                    example: 2846729
-                  lastModified:
-                    type: string
-                    example: '2021-07-05T09:55:52.000Z'
+            $ref: '#/definitions/Thumbnail'
         400:
           description: The specified image name is invalid or non-existent.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              errorMessage:
-                type: string
+            $ref: '#/definitions/Error'
 
         default:
           description: Unexpected error
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              errorMessage:
-                type: string
-  /api/s3/perfect-voice/:
+            $ref: '#/definitions/Error'
+  /perfect-voice/:
     get:
       tags:
         - perfect-voice
@@ -178,31 +121,14 @@ paths:
         200:
           description: The audio files list.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: Hello
-                  format:
-                    type: string
-                    example: wav
-                  path:
-                    type: string
-                    example: data.k-peach.io/perfect-voice/Hello.wav
-                  size:
-                    type: number
-                    example: 2846729
-                  lastModified:
-                    type: string
-                    example: '2021-07-05T09:55:52.000Z'
+            $ref: '#/definitions/PerfectVoice'
 
-  /api/s3/perfect-voice/{name}:
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /perfect-voice/{name}:
     get:
       tags:
         - perfect-voice
@@ -221,51 +147,17 @@ paths:
         200:
           description: A audio file.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: Hello
-                  format:
-                    type: string
-                    example: wav
-                  path:
-                    type: string
-                    example: data.k-peach.io/perfect-voice/Hello.wav
-                  size:
-                    type: number
-                    example: 2846729
-                  lastModified:
-                    type: string
-                    example: '2021-07-05T09:55:52.000Z'
+            $ref: '#/definitions/PerfectVoice'
         400:
           description: The specified audio file name is invalid or non-existent.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              errorMessage:
-                type: string
+            $ref: '#/definitions/Error'
 
         default:
           description: Unexpected error
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              errorMessage:
-                type: string
-  /api/s3/user-voice/:
+            $ref: '#/definitions/Error'
+  /user-voice/:
     get:
       tags:
         - user-voice
@@ -278,29 +170,12 @@ paths:
         200:
           description: The audio files list.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: '2021-07-10'
-                  format:
-                    type: string
-                    example: wav
-                  path:
-                    type: string
-                    example: data.k-peach.io/user-voice/2021-07-10.wav
-                  size:
-                    type: number
-                    example: 2846729
-                  lastModified:
-                    type: string
-                    example: '2021-07-05T09:55:52.000Z'
+            $ref: '#/definitions/UserVoice'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+
     post:
       tags:
         - user-voice
@@ -340,34 +215,19 @@ paths:
                   size:
                     type: number
                     example: 2846729
-                  translatedSentence:
+                  mimetype:
                     type: string
-                    example: 안녕하세요
-                  score:
-                    type: number
-                    example: 0
+                    example: 'audio/wav'
         400:
           description: The specified audio file name is invalid or non-existent.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              errorMessage:
-                type: string
+            $ref: '#/definitions/Error'
 
         default:
           description: Unexpected error
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: false
-              errorMessage:
-                type: string
-  /api/s3/user-voice/{name}:
+            $ref: '#/definitions/Error'
+  /user-voice/{name}:
     get:
       tags:
         - user-voice
@@ -386,29 +246,7 @@ paths:
         200:
           description: A audio file.
           schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              data:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: '2021-07-10'
-                  format:
-                    type: string
-                    example: wav
-                  path:
-                    type: string
-                    example: data.k-peach.io/user-voice/2021-07-10.wav
-                  size:
-                    type: number
-                    example: 2846729
-                  lastModified:
-                    type: string
-                    example: '2021-07-05T09:55:52.000Z'
+            $ref: '#/definitions/UserVoice'
         400:
           description: The specified audio file name is invalid or non-existent.
           schema:
@@ -429,37 +267,84 @@ paths:
                 example: false
               errorMessage:
                 type: string
-  /api/s3/user-voice/test:
-    post:
-      tags:
-        - test
-      summary: test
-      description: You should set up the attribute of form tag like `name="uploadFile"` and file format is `.wav`
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      # parameters:
-      #   - name: 'data'
-      #     in: 'formData'
-      #     description: file to upload `.wav`
-      #     required: true
-      #     type: 'file'
-      responses:
-        200:
-          description: text
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-                example: true
-              # data:
-              #   type: object
-              #   properties:
-              #     translatedSentence:
-              #       type: string
-              #       example: 'asdfasdfasf'
-              #     score:
-              #       type: number
-              #       example: 0
+definitions:
+  Thumbnail:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+            example: 1
+          format:
+            type: string
+            example: jpg
+          path:
+            type: string
+            example: data.k-peach.io/thumbnail/1.jpg
+          size:
+            type: number
+            example: 2846729
+          lastModified:
+            type: string
+            example: '2021-07-05T09:55:52.000Z'
+  PerfectVoice:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Hello
+          format:
+            type: string
+            example: wav
+          path:
+            type: string
+            example: data.k-peach.io/perfect-voice/Hello.wav
+          size:
+            type: number
+            example: 2846729
+          lastModified:
+            type: string
+            example: '2021-07-05T09:55:52.000Z'
+  UserVoice:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+            example: '2021-07-10'
+          format:
+            type: string
+            example: wav
+          path:
+            type: string
+            example: data.k-peach.io/user-voice/2021-07-10.wav
+          size:
+            type: number
+            example: 2846729
+          lastModified:
+            type: string
+            example: '2021-07-05T09:55:52.000Z'
+  Error:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      errorMessage:
+        type: string

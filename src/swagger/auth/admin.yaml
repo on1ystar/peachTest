@@ -1,0 +1,29 @@
+/auth/admin/login:
+  post:
+    tags:
+      - auth
+    summary: Log in as administrator to get jwt token
+    requestBody:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                description: The admin email for login
+      required: true
+    responses:
+      200:
+        description: The images list.
+        content:
+          application/json:
+            schema:
+              $ref: '../swagger.yaml#/components/schemas/UserVoice'
+      400:
+        description: Failed to verify the email entered to log in
+        content:
+          application/json:
+            schema:
+              $ref: '../swagger.yaml#/components/schemas/Error'
