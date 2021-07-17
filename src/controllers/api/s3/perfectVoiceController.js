@@ -6,14 +6,15 @@ const PREFIX = 'perfect-voice';
 const FORMAT = 'wav';
 const regex = /([^/]+)(\.[^./]+)$/g;
 
-// P -> Perfect
-export const getPVoices = async (req, res) => {
+export const getPerfectVoices = async (req, res) => {
   const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
 
   try {
     // data 변수 이름 수정(data는 광범위)
-    const data = await s3Client.send(new ListObjectsCommand(bucketParams));
-    const mappedData = data.Contents.map(el => {
+    const perfectVoices = await s3Client.send(
+      new ListObjectsCommand(bucketParams)
+    );
+    const mappedData = perfectVoices.Contents.map(el => {
       // bucket folder
       if (el.Size === 0) {
         return {
@@ -42,7 +43,7 @@ export const getPVoices = async (req, res) => {
   }
 };
 
-export const getPVoice = async (req, res) => {
+export const getPerfectVoice = async (req, res) => {
   const { name } = req.params;
   const bucketParams = {
     Bucket: conf.bucket.data,
@@ -50,13 +51,15 @@ export const getPVoice = async (req, res) => {
   };
 
   try {
-    const data = await s3Client.send(new GetObjectCommand(bucketParams));
+    const perfectVoice = await s3Client.send(
+      new GetObjectCommand(bucketParams)
+    );
     const obj = {
       name,
       format: FORMAT,
       path: `${conf.bucket.data}/${bucketParams.Key}`,
-      size: data.ContentLength,
-      lastModified: data.LastModified
+      size: perfectVoice.ContentLength,
+      lastModified: perfectVoice.LastModified
     };
     return res.json({ success: 'true', data: obj });
   } catch (err) {

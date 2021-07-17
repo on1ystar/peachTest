@@ -20,6 +20,8 @@ tags:
     description: 'Voice recorded by voice actor'
   - name: 'user-voice'
     description: 'Voice recorded by user'
+  - name: 'test'
+    description: 'test'
 schemes:
   - https
 securityDefinitions:
@@ -32,7 +34,7 @@ security:
   - Bearer: []
 
 paths:
-  /auth/admin/login:
+  /api/auth/admin/login:
     post:
       tags:
         - auth
@@ -63,7 +65,7 @@ paths:
         400:
           description: Failed to verify the email entered to log in
 
-  /thumbnail/:
+  /api/s3/thumbnail/:
     get:
       tags:
         - thumbnail
@@ -100,7 +102,7 @@ paths:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
 
-  /thumbnail/{name}:
+  /api/s3/thumbnail/{name}:
     get:
       tags:
         - thumbnail
@@ -163,7 +165,7 @@ paths:
                 example: false
               errorMessage:
                 type: string
-  /perfect-voice/:
+  /api/s3/perfect-voice/:
     get:
       tags:
         - perfect-voice
@@ -200,7 +202,7 @@ paths:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
 
-  /perfect-voice/{name}:
+  /api/s3/perfect-voice/{name}:
     get:
       tags:
         - perfect-voice
@@ -263,7 +265,7 @@ paths:
                 example: false
               errorMessage:
                 type: string
-  /user-voice/:
+  /api/s3/user-voice/:
     get:
       tags:
         - user-voice
@@ -299,7 +301,6 @@ paths:
                   lastModified:
                     type: string
                     example: '2021-07-05T09:55:52.000Z'
-
     post:
       tags:
         - user-voice
@@ -339,9 +340,12 @@ paths:
                   size:
                     type: number
                     example: 2846729
-                  mimetype:
+                  translatedSentence:
                     type: string
-                    example: 'audio/wav'
+                    example: 안녕하세요
+                  score:
+                    type: number
+                    example: 0
         400:
           description: The specified audio file name is invalid or non-existent.
           schema:
@@ -363,7 +367,7 @@ paths:
                 example: false
               errorMessage:
                 type: string
-  /user-voice/{name}:
+  /api/s3/user-voice/{name}:
     get:
       tags:
         - user-voice
@@ -425,3 +429,37 @@ paths:
                 example: false
               errorMessage:
                 type: string
+  /api/s3/user-voice/test:
+    post:
+      tags:
+        - test
+      summary: test
+      description: You should set up the attribute of form tag like `name="uploadFile"` and file format is `.wav`
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      # parameters:
+      #   - name: 'data'
+      #     in: 'formData'
+      #     description: file to upload `.wav`
+      #     required: true
+      #     type: 'file'
+      responses:
+        200:
+          description: text
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              # data:
+              #   type: object
+              #   properties:
+              #     translatedSentence:
+              #       type: string
+              #       example: 'asdfasdfasf'
+              #     score:
+              #       type: number
+              #       example: 0

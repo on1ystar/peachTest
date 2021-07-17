@@ -25,6 +25,9 @@ const conf = {
       expiresIn: process.env.JWT_EXPIRES_IN,
       issuer: process.env.JWT_ISSUER
     }
+  },
+  peachAi: {
+    ip: process.env.PEACH_AI_IP
   }
 };
 

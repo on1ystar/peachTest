@@ -1,23 +1,24 @@
 import express from 'express';
 import {
-  getUVoice,
-  getUVoices,
-  uploadUVoice
+  getUserVoice,
+  getUserVoices,
+  test,
+  uploadUserVoice
 } from '../../../controllers/api/s3/userVoiceController';
 import { middleAuth } from '../../../middlewares';
 
 const userVoiceRouter = express.Router();
 
 // get the user voices list
-// api.k-peach.io/user-voice
-userVoiceRouter.get('/', middleAuth, getUVoices);
+// api.k-peach.io/api/s3/user-voice
+userVoiceRouter.get('/', middleAuth, getUserVoices);
 
 // get a user voice
-// api.k-peach.io/user-voice/{name}
-userVoiceRouter.get('/:name', middleAuth, getUVoice);
+// api.k-peach.io/api/s3/user-voice/{name}
+userVoiceRouter.get('/:name', middleAuth, getUserVoice);
 
 // upload a user voice
-// api.k-peach.io/user-voice/
-userVoiceRouter.post('/', middleAuth, uploadUVoice);
+// api.k-peach.io/api/s3/user-voice/
+userVoiceRouter.post('/', middleAuth, uploadUserVoice);
 
 export default userVoiceRouter;

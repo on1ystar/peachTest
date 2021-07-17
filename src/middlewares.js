@@ -10,6 +10,7 @@ export const middleMulter = multer({
   // fileFilter(req, file, cb) {}
 });
 
+// B -> b 소문자 에러 처리, split() 에러 처리
 export const middleAuth = async (req, res, next) => {
   // Authorization: <bearer> <token>
   const [bearer, token] = req.headers.authorization.split(' ');
@@ -27,8 +28,8 @@ export const middleAuth = async (req, res, next) => {
   try {
     const { id, email, iss } = await jwt.verify(token, conf.jwt.secretKey);
     const query = {
-      ame: 'selectAdminByIdAndEmail',
-      text: 'SELECT * FROM admin WHERE id = $1 amd email = $2',
+      name: 'selectAdminByIdAndEmail',
+      text: 'SELECT * FROM admin WHERE id = $1 and email = $2',
       values: [id, email]
     };
     try {
@@ -39,8 +40,8 @@ export const middleAuth = async (req, res, next) => {
           .status(403)
           .json({ success: false, errorMessage: 'invalid jwt' });
       }
-      if (iss !== conf.jwt.iss) {
-        console.log('InvalidIssError: ', 'Iss does not matched');
+      if (iss !== conf.jwt.options.issuer) {
+        console.log('InvalidIssuerError: ', 'Issuer does not matched');
         return res
           .status(403)
           .json({ success: false, errorMessage: 'invalid jwt' });

@@ -4,6 +4,8 @@ import {
   PutObjectCommand
 } from '@aws-sdk/client-s3';
 import multer from 'multer';
+import axios from 'axios';
+import dbClient from '../../../dbConnect';
 import { s3Client } from '../../../config/s3';
 import getNow from '../../../date';
 import conf from '../../../config';
@@ -12,8 +14,9 @@ import { middleMulter } from '../../../middlewares';
 const PREFIX = 'user-voice';
 const FORMAT = 'wav';
 const regex = /([^/]+)(\.[^./]+)$/g;
+const AI_SERVER_URL = `http://${conf.peachAi.ip}`;
 
-export const getUVoices = async (req, res) => {
+export const getUserVoices = async (req, res) => {
   const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
 
   try {
@@ -46,7 +49,7 @@ export const getUVoices = async (req, res) => {
   }
 };
 
-export const getUVoice = async (req, res) => {
+export const getUserVoice = async (req, res) => {
   const { name } = req.params;
   const bucketParams = {
     Bucket: conf.bucket.data,
@@ -71,8 +74,9 @@ export const getUVoice = async (req, res) => {
   }
 };
 
-export const uploadUVoice = (req, res) => {
+export const uploadUserVoice = (req, res) => {
   middleMulter.single('uploadedFile')(req, res, async err => {
+    // MulterError
     if (err instanceof multer.MulterError) {
       console.log(err);
       return res
@@ -85,12 +89,14 @@ export const uploadUVoice = (req, res) => {
         .status(400)
         .json({ success: 'false', errorMessage: err.message });
     }
-    if (req.file.mimetype !== 'audio/wav') {
-      return res.status(400).json({
-        success: 'false',
-        errorMessage: 'You should upload "audio/wav" of mimetype'
-      });
-    }
+    // audio/wav format error
+    // if (!(req.file.mimetype in ['audio/wav', 'audio/vnd.wave'])) {
+    //   console.log('mimetypeError');
+    //   return res.status(400).json({
+    //     success: 'false',
+    //     errorMessage: 'You should upload "audio/wav" of mimetype'
+    //   });
+    // }
     const bucketParams = { Bucket: conf.bucket.data, Prefix: PREFIX };
     try {
       // for userVoices counts
@@ -105,18 +111,52 @@ export const uploadUVoice = (req, res) => {
         Body: req.file.buffer,
         ACL: 'public-read'
       };
-      const data = await s3Client.send(new PutObjectCommand(uploadParams));
-      console.log('Success', data);
-      return res.json({
-        success: 'true',
+      await s3Client.send(new PutObjectCommand(uploadParams));
+      console.log('Success upload');
+
+      const url = `${AI_SERVER_URL}/evaluation`;
+      const options = {
+        method: 'POST',
         data: {
+          format: FORMAT,
+          path: `${conf.bucket.data}/${uploadParams.Key}`,
+          size: req.file.size
+        },
+        url
+      };
+      // score request to ai server
+      try {
+        const aiResponse = await axios(options);
+        console.log('Success response to ai-server', aiResponse.data);
+
+        const data = {
           name: uploadParams.Key.match(regex)[0].split('.')[0],
           format: FORMAT,
           path: `${conf.bucket.data}/${uploadParams.Key}`,
           size: req.file.size,
-          mimetype: req.file.mimetype
+          translatedSentence: aiResponse.data.data.translatedSentence,
+          score: aiResponse.data.data.score
+        };
+
+        // db에 발음 평가 결과 저장
+        try {
+          const query = {
+            name: 'insertUserVoiceEvaluation',
+            text: 'INSERT INTO admin_voice VALUES(default, 1, $1, $2, $3, now())',
+            values: [data.path, data.translatedSentence, data.score]
+          };
+          await dbClient.query(query);
+        } catch (err) {
+          console.log('selectAdminByEmailError: ', err.stack);
+          return res.status(502).end();
         }
-      });
+        return res.json({
+          success: 'true',
+          data
+        });
+      } catch (error) {
+        console.error('ReqeustToAIServerError: ', error.message);
+      }
     } catch (err) {
       console.log('Error', err);
       return res

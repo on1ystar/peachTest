@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { response } from 'express';
 import dbClient from '../../dbConnect';
 import conf from '../../config';
 
