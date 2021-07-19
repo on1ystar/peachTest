@@ -108,6 +108,7 @@ export const uploadUserVoice = (req, res) => {
       const userVoices = await s3Client.send(
         new ListObjectsCommand(bucketParams)
       );
+      // 예약어는 피하게 -> 코드에 의미 부여
       const date = getNow(); // 한국을 기준으로 현재 날짜 반환 'yyyy-mm-dd'
 
       const uploadParams = {
@@ -134,9 +135,11 @@ export const uploadUserVoice = (req, res) => {
       try {
         const respondedData = (await axios(options)).data;
         if (!respondedData.success) {
+          // 오류 코드 부여
           console.log('request fail');
           return res.status(400).json({ success: false, errorMessage: '' });
         }
+        // data를 더 구제적으로
         console.log('Success response to ai-server', respondedData.data);
 
         const evaluatedUserVoice = {
